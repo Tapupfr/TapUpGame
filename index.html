@@ -20,10 +20,6 @@
             text-shadow: 0 0 20px cyan;
         }
 
-        .container {
-            margin-top: 50px;
-        }
-
         .button {
             background: cyan;
             color: black;
@@ -45,7 +41,7 @@
             transform: scale(1.1);
         }
 
-        #category-selection, #game-setup, #game-container {
+        #category-selection, #game-container, #end-screen {
             display: none;
         }
 
@@ -57,6 +53,23 @@
             margin: 20px auto;
             border-radius: 10px;
             text-shadow: 0 0 10px cyan;
+        }
+
+        #players-list {
+            text-align: left;
+            margin: auto;
+            width: fit-content;
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .emoji {
+            font-size: 20px;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -79,6 +92,7 @@
         <button class="button" onclick="addPlayer()">Ajouter</button>
         <button class="button" onclick="startGame()">Démarrer</button>
         <p id="error-msg" style="color: red;"></p>
+        <div id="players-list"></div>
     </div>
 
     <div id="game-container">
@@ -88,40 +102,25 @@
             <p id="question">Préparez-vous à jouer !</p>
             <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
             <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
-            <p id="gage-container"></p>
-            <p id="loser-container"></p>
         </div>
+    </div>
+
+    <div id="end-screen">
+        <h1>🎉 Fin de la partie !</h1>
+        <p id="loser-container"></p>
+        <p id="gage-container"></p>
+        <button class="button" onclick="restartGame()">🔄 Recommencer une partie</button>
     </div>
 
     <script>
         let players = [];
         let selectedCategory = "";
         let questions = {
-            culture: [
-                "💡 Quel est le plus long fleuve du monde ?",
-                "🧐 Qui a peint La Joconde ?",
-                "🏛️ En quelle année a eu lieu la Révolution Française ?"
-            ],
-            humour: [
-                "🤣 Quelle est la meilleure blague que tu connais ?",
-                "😂 Fais une imitation d'un acteur célèbre !",
-                "📢 Raconte une blague à voix haute !"
-            ],
-            blagues: [
-                "😆 Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ?",
-                "🤡 Quelle est la différence entre un pigeon ?",
-                "😂 Pourquoi le poulet a traversé la route ?"
-            ],
-            defis: [
-                "🔥 Bois une gorgée de ta boisson sans les mains !",
-                "🎭 Fais une grimace et tiens-la 10 secondes !",
-                "💪 Fais 5 pompes maintenant !"
-            ],
-            mystere: [
-                "🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?",
-                "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?",
-                "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"
-            ]
+            culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
+            humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
+            blagues: ["😆 Pourquoi les plongeurs plongent-ils toujours en arrière ?", "🤡 Quelle est la différence entre un pigeon ?", "😂 Pourquoi le poulet a traversé la route ?"],
+            defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
+            mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
         };
         let gages = [
             "🛑 Danse au milieu du restaurant pendant 10 secondes !",
@@ -146,8 +145,17 @@
                 return;
             }
             players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
-
+            updatePlayerList();
             document.getElementById("playerName").value = "";
+        }
+
+        function updatePlayerList() {
+            let playerListDiv = document.getElementById("players-list");
+            playerListDiv.innerHTML = "";
+            players.forEach(player => {
+                let scoreText = player.score > 0 ? ` - ${player.score} pts` : "";
+                playerListDiv.innerHTML += `<div class="player">${player.name}${scoreText}</div>`;
+            });
         }
 
         function startGame() {
@@ -175,19 +183,21 @@
 
         function validateQuestion(success) {
             let player = players[currentPlayerIndex];
-            if (success) player.score += 10;
+            if (success) player.score += 1;
             player.questionsAnswered++;
 
+            updatePlayerList();
             nextTurn();
         }
 
         function endGame() {
             let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
-            document.getElementById("loser-container").innerHTML = `❌ Dommage ${loser.name}, clique ici pour ton gage ! <button class="button" onclick="revealGage('${loser.name}')">Découvrir</button>`;
+            document.getElementById("end-screen").style.display = "block";
+            document.getElementById("loser-container").textContent = `❌ Dommage ${loser.name}, ton gage est : ${gages[Math.floor(Math.random() * gages.length)]}`;
         }
 
-        function revealGage(name) {
-            document.getElementById("gage-container").textContent = `${name}, ton gage est : ${gages[Math.floor(Math.random() * gages.length)]}`;
+        function restartGame() {
+            location.reload();
         }
     </script>
 
