@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Le Jeu Futuriste !</title>
+    <title>Tap Up - Qui Perd, Prend un Gage !</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -52,6 +52,13 @@
         .emoji {
             font-size: 24px;
             margin-right: 10px;
+        }
+
+        #announcement {
+            font-size: 24px;
+            font-weight: bold;
+            color: yellow;
+            margin: 20px;
         }
 
         #question {
@@ -117,6 +124,7 @@
         </div>
 
         <div id="game">
+            <p id="announcement"></p>
             <p id="question">Cliquez pour une question !</p>
             <button class="button" onclick="askQuestion()">Lancer</button>
             <br>
@@ -174,22 +182,31 @@
             document.getElementById("setup").style.display = "none";
             document.getElementById("game-container").style.display = "flex";
             updatePlayerList();
+            setTimeout(() => {
+                announceTurn(players[0]);
+            }, 500);
+        }
+
+        function announceTurn(player) {
+            let messages = [
+                `🔥 ${player.name}, prépare-toi !`,
+                `👏 Allez ${player.name}, montre ce que tu as !`,
+                `🤣 ${player.name}, prouve que tu es le boss !`
+            ];
+            document.getElementById("announcement").textContent = messages[Math.floor(Math.random() * messages.length)];
         }
 
         function askQuestion() {
-            if (questions.length === 0 || roundsPlayed >= maxRounds * players.length) {
+            if (roundsPlayed >= maxRounds * players.length) {
                 endGame();
                 return;
             }
 
-            let randomPlayerIndex = Math.floor(Math.random() * players.length);
-            currentPlayer = players[randomPlayerIndex];
+            let randomIndex = Math.floor(Math.random() * players.length);
+            currentPlayer = players[randomIndex];
 
-            let randomIndex = Math.floor(Math.random() * questions.length);
-            let question = questions[randomIndex];
-
+            let question = questions.splice(Math.floor(Math.random() * questions.length), 1)[0];
             document.getElementById("question").textContent = `${currentPlayer.name}, ${question}`;
-            questions.splice(randomIndex, 1);
 
             roundsPlayed++;
         }
@@ -203,7 +220,11 @@
 
         function endGame() {
             let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
-            document.getElementById("loser-container").textContent = `${loser.name} a perdu et doit faire : ${gages[Math.floor(Math.random() * gages.length)]}`;
+            document.getElementById("loser-container").innerHTML = `❌ Dommage ${loser.name}, clique ici pour ton gage ! <button class="button" onclick="revealGage('${loser.name}')">Découvrir</button>`;
+        }
+
+        function revealGage(name) {
+            document.getElementById("gage-container").textContent = `${name}, ton gage est : ${gages[Math.floor(Math.random() * gages.length)]}`;
         }
     </script>
 
