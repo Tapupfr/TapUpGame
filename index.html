@@ -71,6 +71,10 @@
             font-size: 20px;
             margin-right: 10px;
         }
+
+        #answer-section {
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -100,8 +104,7 @@
         <div class="neon-box">
             <p id="announcement"></p>
             <p id="question">Préparez-vous à jouer !</p>
-            <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
-            <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
+            <div id="answer-section"></div>
         </div>
     </div>
 
@@ -115,6 +118,7 @@
     <script>
         let players = [];
         let selectedCategory = "";
+        let usedQuestions = [];
         let questions = {
             culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
             humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
@@ -133,6 +137,7 @@
 
         function chooseCategory(category) {
             selectedCategory = category;
+            usedQuestions = [];
             document.getElementById("portal").style.display = "none";
             document.getElementById("category-selection").style.display = "block";
             document.getElementById("selected-category").textContent = `📚 Catégorie choisie : ${category.toUpperCase()}`;
@@ -145,17 +150,7 @@
                 return;
             }
             players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
-            updatePlayerList();
             document.getElementById("playerName").value = "";
-        }
-
-        function updatePlayerList() {
-            let playerListDiv = document.getElementById("players-list");
-            playerListDiv.innerHTML = "";
-            players.forEach(player => {
-                let scoreText = player.score > 0 ? ` - ${player.score} pts` : "";
-                playerListDiv.innerHTML += `<div class="player">${player.name}${scoreText}</div>`;
-            });
         }
 
         function startGame() {
@@ -177,16 +172,22 @@
 
             let player = players[currentPlayerIndex];
             document.getElementById("announcement").textContent = `🔥 ${player.name}, c'est ton tour !`;
-            let question = questions[selectedCategory][Math.floor(Math.random() * questions[selectedCategory].length)];
+
+            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q));
+            if (availableQuestions.length === 0) availableQuestions = questions[selectedCategory];
+
+            let question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(question);
             document.getElementById("question").textContent = `${player.name}, ${question}`;
+
+            document.getElementById("answer-section").innerHTML = `<button class="button" onclick="validateQuestion(true)">Répondre</button>`;
         }
 
-        function validateQuestion(success) {
+        function validateQuestion() {
             let player = players[currentPlayerIndex];
-            if (success) player.score += 1;
+            player.score += 1;
             player.questionsAnswered++;
 
-            updatePlayerList();
             nextTurn();
         }
 
