@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Choisis ta Catégorie !</title>
+    <title>Tap Up - Choisissez votre Catégorie !</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -12,7 +12,6 @@
             background: linear-gradient(90deg, #000428, #004e92);
             color: white;
             text-align: center;
-            overflow: hidden;
         }
 
         h1 {
@@ -30,10 +29,8 @@
             border-radius: 5px;
             margin: 10px;
             transition: 0.3s;
-            display: block;
             width: 80%;
             max-width: 400px;
-            margin: 10px auto;
         }
 
         .button:hover {
@@ -104,6 +101,8 @@
         <div class="neon-box">
             <p id="announcement"></p>
             <p id="question">Préparez-vous à jouer !</p>
+            <button class="button" id="show-answer" onclick="showAnswer()" style="display: none;">Répondre</button>
+            <p id="answer" style="display: none;"></p>
             <div id="answer-section"></div>
         </div>
     </div>
@@ -120,11 +119,16 @@
         let selectedCategory = "";
         let usedQuestions = [];
         let questions = {
-            culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
-            humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
-            blagues: ["😆 Pourquoi les plongeurs plongent-ils toujours en arrière ?", "🤡 Quelle est la différence entre un pigeon ?", "😂 Pourquoi le poulet a traversé la route ?"],
-            defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
-            mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
+            culture: [
+                { q: "💡 Quel est le plus long fleuve du monde ?", a: "Le Nil" },
+                { q: "🧐 Qui a peint La Joconde ?", a: "Léonard de Vinci" },
+                { q: "🏛️ En quelle année a eu lieu la Révolution Française ?", a: "1789" }
+            ],
+            humour: [
+                { q: "🤣 Quelle est la meilleure blague que tu connais ?", a: "C'est à toi de répondre !" },
+                { q: "😂 Fais une imitation d'un acteur célèbre !", a: "Allez, montre ton talent !" },
+                { q: "📢 Raconte une blague à voix haute !", a: "Le public t’écoute !" }
+            ]
         };
         let gages = [
             "🛑 Danse au milieu du restaurant pendant 10 secondes !",
@@ -134,6 +138,7 @@
         ];
         let currentPlayerIndex = 0;
         let rounds = 3;
+        let currentQuestion = {};
 
         function chooseCategory(category) {
             selectedCategory = category;
@@ -149,7 +154,9 @@
                 document.getElementById("error-msg").textContent = "Ajoutez au moins 2 et max 6 joueurs.";
                 return;
             }
-            players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
+            let emoji = players.length % 2 === 0 ? "👨‍🚀" : "👩‍🚀";
+            players.push({ name: nameInput, score: 0, questionsAnswered: 0, emoji: emoji });
+
             document.getElementById("playerName").value = "";
         }
 
@@ -173,28 +180,20 @@
             let player = players[currentPlayerIndex];
             document.getElementById("announcement").textContent = `🔥 ${player.name}, c'est ton tour !`;
 
-            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q));
+            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q.q));
             if (availableQuestions.length === 0) availableQuestions = questions[selectedCategory];
 
-            let question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-            usedQuestions.push(question);
-            document.getElementById("question").textContent = `${player.name}, ${question}`;
+            currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(currentQuestion.q);
 
-            document.getElementById("answer-section").innerHTML = `<button class="button" onclick="validateQuestion(true)">Répondre</button>`;
+            document.getElementById("question").textContent = `${player.name}, ${currentQuestion.q}`;
+            document.getElementById("answer").textContent = `Réponse : ${currentQuestion.a}`;
+            document.getElementById("show-answer").style.display = "block";
         }
 
-        function validateQuestion() {
-            let player = players[currentPlayerIndex];
-            player.score += 1;
-            player.questionsAnswered++;
-
-            nextTurn();
-        }
-
-        function endGame() {
-            let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
-            document.getElementById("end-screen").style.display = "block";
-            document.getElementById("loser-container").textContent = `❌ Dommage ${loser.name}, ton gage est : ${gages[Math.floor(Math.random() * gages.length)]}`;
+        function showAnswer() {
+            document.getElementById("answer").style.display = "block";
+            document.getElementById("show-answer").style.display = "none";
         }
 
         function restartGame() {
