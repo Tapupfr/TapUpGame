@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Qui Perd, Prend un Gage !</title>
+    <title>Tap Up - Choisis ta Catégorie !</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -16,73 +16,28 @@
         }
 
         h1 {
-            font-size: 32px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            font-size: 36px;
             text-shadow: 0 0 20px cyan;
         }
 
-        #game-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        #players {
-            width: 30%;
-            text-align: left;
-            padding: 20px;
-            border-right: 2px solid cyan;
-        }
-
-        #game {
-            width: 70%;
-            padding: 20px;
-        }
-
-        .player {
-            font-size: 20px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .emoji {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-
-        #announcement {
-            font-size: 24px;
-            font-weight: bold;
-            color: yellow;
-            margin: 20px;
-        }
-
-        #question {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 20px;
-            animation: glow 1s infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px cyan; }
-            to { text-shadow: 0 0 20px lime; }
+        .container {
+            margin-top: 50px;
         }
 
         .button {
             background: cyan;
             color: black;
-            padding: 10px 20px;
+            padding: 15px 25px;
             font-size: 18px;
             border: none;
             cursor: pointer;
             border-radius: 5px;
             margin: 10px;
             transition: 0.3s;
+            display: block;
+            width: 80%;
+            max-width: 400px;
+            margin: 10px auto;
         }
 
         .button:hover {
@@ -90,43 +45,47 @@
             transform: scale(1.1);
         }
 
-        #gage-container {
-            font-size: 20px;
-            color: red;
-            font-weight: bold;
-            margin-top: 20px;
+        #category-selection, #game-setup, #game-container {
+            display: none;
         }
 
-        #loser-container {
-            font-size: 22px;
-            font-weight: bold;
-            color: yellow;
-            margin-top: 20px;
+        .neon-box {
+            border: 2px solid cyan;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 10px;
+            text-shadow: 0 0 10px cyan;
         }
     </style>
 </head>
 <body>
 
-    <h1>⚡ Tap Up - Qui Perd, Prend un Gage ! ⚡</h1>
+    <div id="portal">
+        <h1>🚀 Bienvenue dans Tap Up !</h1>
+        <p>🎲 Choisissez votre catégorie de questions pour commencer l'aventure !</p>
+        <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
+        <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
+        <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
+        <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
+        <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
+    </div>
 
-    <div id="setup">
-        <h2>💡 Ajoutez les joueurs :</h2>
+    <div id="category-selection">
+        <h2 id="selected-category"></h2>
+        <p>Ajoutez les joueurs :</p>
         <input type="text" id="playerName" placeholder="Entrez un prénom">
         <button class="button" onclick="addPlayer()">Ajouter</button>
         <button class="button" onclick="startGame()">Démarrer</button>
         <p id="error-msg" style="color: red;"></p>
     </div>
 
-    <div id="game-container" style="display: none;">
-        <div id="players">
-            <h3>👥 Joueurs & Scores</h3>
-            <div id="player-list"></div>
-        </div>
-
-        <div id="game">
+    <div id="game-container">
+        <h1>⚡ Tap Up - Jouons ! ⚡</h1>
+        <div class="neon-box">
             <p id="announcement"></p>
             <p id="question">Préparez-vous à jouer !</p>
-            <br>
             <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
             <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
             <p id="gage-container"></p>
@@ -136,23 +95,49 @@
 
     <script>
         let players = [];
-        let questions = [
-            "💭 Quelle est la pire chose que tu as commandée au resto ?",
-            "🍕 Si tu devais manger UN SEUL plat toute ta vie, ce serait quoi ?",
-            "🔥 Défie un joueur au bras de fer sur la table !",
-            "📸 Fais une pose bizarre avec ta fourchette et prends une photo !",
-            "🍽️ Commande un plat en chantant !",
-            "🎭 Fais semblant d’être un chef étoilé en goûtant ton plat !"
-        ];
+        let selectedCategory = "";
+        let questions = {
+            culture: [
+                "💡 Quel est le plus long fleuve du monde ?",
+                "🧐 Qui a peint La Joconde ?",
+                "🏛️ En quelle année a eu lieu la Révolution Française ?"
+            ],
+            humour: [
+                "🤣 Quelle est la meilleure blague que tu connais ?",
+                "😂 Fais une imitation d'un acteur célèbre !",
+                "📢 Raconte une blague à voix haute !"
+            ],
+            blagues: [
+                "😆 Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ?",
+                "🤡 Quelle est la différence entre un pigeon ?",
+                "😂 Pourquoi le poulet a traversé la route ?"
+            ],
+            defis: [
+                "🔥 Bois une gorgée de ta boisson sans les mains !",
+                "🎭 Fais une grimace et tiens-la 10 secondes !",
+                "💪 Fais 5 pompes maintenant !"
+            ],
+            mystere: [
+                "🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?",
+                "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?",
+                "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"
+            ]
+        };
         let gages = [
             "🛑 Danse au milieu du restaurant pendant 10 secondes !",
             "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
             "🤣 Commande un dessert en pleurant de joie.",
-            "😜 Parle avec l’accent italien pendant 2 minutes.",
-            "💰 Demande si tu peux payer en lave-vaisselle."
+            "😜 Parle avec l’accent italien pendant 2 minutes."
         ];
         let currentPlayerIndex = 0;
         let rounds = 3;
+
+        function chooseCategory(category) {
+            selectedCategory = category;
+            document.getElementById("portal").style.display = "none";
+            document.getElementById("category-selection").style.display = "block";
+            document.getElementById("selected-category").textContent = `📚 Catégorie choisie : ${category.toUpperCase()}`;
+        }
 
         function addPlayer() {
             let nameInput = document.getElementById("playerName").value;
@@ -160,29 +145,16 @@
                 document.getElementById("error-msg").textContent = "Ajoutez au moins 2 et max 6 joueurs.";
                 return;
             }
-            let avatar = players.length % 2 === 0 ? "👨‍🚀" : "👩‍🚀";
-            players.push({ name: nameInput, score: 0, emoji: avatar, questionsAnswered: 0 });
+            players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
 
-            updatePlayerList();
             document.getElementById("playerName").value = "";
-        }
-
-        function updatePlayerList() {
-            let playerListDiv = document.getElementById("player-list");
-            playerListDiv.innerHTML = "";
-            players.forEach(player => {
-                playerListDiv.innerHTML += `<div class="player">${player.emoji} ${player.name} - <b>${player.score} pts</b> (${player.questionsAnswered}/3)</div>`;
-            });
         }
 
         function startGame() {
             if (players.length < 2) return;
-            document.getElementById("setup").style.display = "none";
-            document.getElementById("game-container").style.display = "flex";
-            updatePlayerList();
-            setTimeout(() => {
-                nextTurn();
-            }, 500);
+            document.getElementById("category-selection").style.display = "none";
+            document.getElementById("game-container").style.display = "block";
+            nextTurn();
         }
 
         function nextTurn() {
@@ -196,15 +168,8 @@
             } while (players[currentPlayerIndex].questionsAnswered >= rounds);
 
             let player = players[currentPlayerIndex];
-
-            let messages = [
-                `🔥 ${player.name}, c'est ton tour !`,
-                `👏 Allez ${player.name}, montre ce que tu as !`,
-                `🤣 ${player.name}, prouve que tu es le boss !`
-            ];
-            document.getElementById("announcement").textContent = messages[Math.floor(Math.random() * messages.length)];
-
-            let question = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById("announcement").textContent = `🔥 ${player.name}, c'est ton tour !`;
+            let question = questions[selectedCategory][Math.floor(Math.random() * questions[selectedCategory].length)];
             document.getElementById("question").textContent = `${player.name}, ${question}`;
         }
 
@@ -213,7 +178,6 @@
             if (success) player.score += 10;
             player.questionsAnswered++;
 
-            updatePlayerList();
             nextTurn();
         }
 
