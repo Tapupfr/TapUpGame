@@ -125,8 +125,7 @@
 
         <div id="game">
             <p id="announcement"></p>
-            <p id="question">Cliquez pour une question !</p>
-            <button class="button" onclick="askQuestion()">Lancer</button>
+            <p id="question">Préparez-vous à jouer !</p>
             <br>
             <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
             <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
@@ -152,9 +151,8 @@
             "😜 Parle avec l’accent italien pendant 2 minutes.",
             "💰 Demande si tu peux payer en lave-vaisselle."
         ];
-        let currentPlayer;
-        let roundsPlayed = 0;
-        const maxRounds = 3;
+        let currentPlayerIndex = 0;
+        let rounds = 3;
 
         function addPlayer() {
             let nameInput = document.getElementById("playerName").value;
@@ -163,7 +161,7 @@
                 return;
             }
             let avatar = players.length % 2 === 0 ? "👨‍🚀" : "👩‍🚀";
-            players.push({ name: nameInput, score: 0, emoji: avatar });
+            players.push({ name: nameInput, score: 0, emoji: avatar, questionsAnswered: 0 });
 
             updatePlayerList();
             document.getElementById("playerName").value = "";
@@ -173,7 +171,7 @@
             let playerListDiv = document.getElementById("player-list");
             playerListDiv.innerHTML = "";
             players.forEach(player => {
-                playerListDiv.innerHTML += `<div class="player">${player.emoji} ${player.name} - <b>${player.score} pts</b></div>`;
+                playerListDiv.innerHTML += `<div class="player">${player.emoji} ${player.name} - <b>${player.score} pts</b> (${player.questionsAnswered}/3)</div>`;
             });
         }
 
@@ -183,39 +181,40 @@
             document.getElementById("game-container").style.display = "flex";
             updatePlayerList();
             setTimeout(() => {
-                announceTurn(players[0]);
+                nextTurn();
             }, 500);
         }
 
-        function announceTurn(player) {
-            let messages = [
-                `🔥 ${player.name}, prépare-toi !`,
-                `👏 Allez ${player.name}, montre ce que tu as !`,
-                `🤣 ${player.name}, prouve que tu es le boss !`
-            ];
-            document.getElementById("announcement").textContent = messages[Math.floor(Math.random() * messages.length)];
-        }
-
-        function askQuestion() {
-            if (roundsPlayed >= maxRounds * players.length) {
+        function nextTurn() {
+            if (players.every(p => p.questionsAnswered === rounds)) {
                 endGame();
                 return;
             }
 
-            let randomIndex = Math.floor(Math.random() * players.length);
-            currentPlayer = players[randomIndex];
+            do {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            } while (players[currentPlayerIndex].questionsAnswered >= rounds);
 
-            let question = questions.splice(Math.floor(Math.random() * questions.length), 1)[0];
-            document.getElementById("question").textContent = `${currentPlayer.name}, ${question}`;
+            let player = players[currentPlayerIndex];
 
-            roundsPlayed++;
+            let messages = [
+                `🔥 ${player.name}, c'est ton tour !`,
+                `👏 Allez ${player.name}, montre ce que tu as !`,
+                `🤣 ${player.name}, prouve que tu es le boss !`
+            ];
+            document.getElementById("announcement").textContent = messages[Math.floor(Math.random() * messages.length)];
+
+            let question = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById("question").textContent = `${player.name}, ${question}`;
         }
 
         function validateQuestion(success) {
-            if (success) currentPlayer.score += 10;
-            else document.getElementById("gage-container").textContent = `${currentPlayer.name} doit faire : ${gages[Math.floor(Math.random() * gages.length)]}`;
+            let player = players[currentPlayerIndex];
+            if (success) player.score += 10;
+            player.questionsAnswered++;
+
             updatePlayerList();
-            askQuestion();
+            nextTurn();
         }
 
         function endGame() {
