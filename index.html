@@ -130,11 +130,13 @@
     <div id="game-container">
         <h1>⚡ Tap Up - C'est Parti ! ⚡</h1>
         <div class="neon-box">
-            <p id="announcement"></p>
-            <p id="question">Prêt à jouer ?</p>
+            <p id="announcement">Prêt à jouer ?</p>
+            <button class="button" onclick="startQuestions()">Commencer</button>
+        </div>
+        <div class="neon-box" id="question-box" style="display: none;">
+            <p id="question"></p>
             <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
             <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
-            <div id="answer-section"></div>
         </div>
     </div>
 
@@ -182,6 +184,11 @@
         function startGame() {
             document.getElementById("category-selection").style.display = "none";
             document.getElementById("game-container").style.display = "block";
+        }
+
+        function startQuestions() {
+            document.querySelector(".neon-box").style.display = "none";
+            document.getElementById("question-box").style.display = "block";
         }
     </script>
 
