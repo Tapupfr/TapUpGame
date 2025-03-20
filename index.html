@@ -78,7 +78,7 @@
 
     <div id="portal">
         <h1>🚀 Bienvenue dans Tap Up !</h1>
-        <p>🎲 Choisissez votre catégorie de questions pour commencer l'aventure !</p>
+        <p>🎲 Choisissez votre catégorie de questions :</p>
         <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
         <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
         <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
@@ -101,8 +101,7 @@
         <div class="neon-box">
             <p id="announcement"></p>
             <p id="question">Préparez-vous à jouer !</p>
-            <button class="button" id="show-answer" onclick="showAnswer()" style="display: none;">Répondre</button>
-            <p id="answer" style="display: none;"></p>
+            <button class="button" onclick="nextTurn()">Question Suivante</button>
             <div id="answer-section"></div>
         </div>
     </div>
@@ -110,7 +109,6 @@
     <div id="end-screen">
         <h1>🎉 Fin de la partie !</h1>
         <p id="loser-container"></p>
-        <p id="gage-container"></p>
         <button class="button" onclick="restartGame()">🔄 Recommencer une partie</button>
     </div>
 
@@ -119,26 +117,14 @@
         let selectedCategory = "";
         let usedQuestions = [];
         let questions = {
-            culture: [
-                { q: "💡 Quel est le plus long fleuve du monde ?", a: "Le Nil" },
-                { q: "🧐 Qui a peint La Joconde ?", a: "Léonard de Vinci" },
-                { q: "🏛️ En quelle année a eu lieu la Révolution Française ?", a: "1789" }
-            ],
-            humour: [
-                { q: "🤣 Quelle est la meilleure blague que tu connais ?", a: "C'est à toi de répondre !" },
-                { q: "😂 Fais une imitation d'un acteur célèbre !", a: "Allez, montre ton talent !" },
-                { q: "📢 Raconte une blague à voix haute !", a: "Le public t’écoute !" }
-            ]
+            culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
+            humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
+            blagues: ["😆 Pourquoi les plongeurs plongent-ils toujours en arrière ?", "🤡 Quelle est la différence entre un pigeon ?", "😂 Pourquoi le poulet a traversé la route ?"],
+            defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
+            mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
         };
-        let gages = [
-            "🛑 Danse au milieu du restaurant pendant 10 secondes !",
-            "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
-            "🤣 Commande un dessert en pleurant de joie.",
-            "😜 Parle avec l’accent italien pendant 2 minutes."
-        ];
         let currentPlayerIndex = 0;
         let rounds = 3;
-        let currentQuestion = {};
 
         function chooseCategory(category) {
             selectedCategory = category;
@@ -180,20 +166,18 @@
             let player = players[currentPlayerIndex];
             document.getElementById("announcement").textContent = `🔥 ${player.name}, c'est ton tour !`;
 
-            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q.q));
+            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q));
             if (availableQuestions.length === 0) availableQuestions = questions[selectedCategory];
 
-            currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-            usedQuestions.push(currentQuestion.q);
-
-            document.getElementById("question").textContent = `${player.name}, ${currentQuestion.q}`;
-            document.getElementById("answer").textContent = `Réponse : ${currentQuestion.a}`;
-            document.getElementById("show-answer").style.display = "block";
+            let question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(question);
+            document.getElementById("question").textContent = `${player.name}, ${question}`;
         }
 
-        function showAnswer() {
-            document.getElementById("answer").style.display = "block";
-            document.getElementById("show-answer").style.display = "none";
+        function endGame() {
+            let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
+            document.getElementById("end-screen").style.display = "block";
+            document.getElementById("loser-container").textContent = `❌ Dommage ${loser.name}, tu as perdu !`;
         }
 
         function restartGame() {
