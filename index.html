@@ -40,6 +40,7 @@
         #question {
             font-size: 22px;
             margin: 20px 0;
+            font-weight: bold;
         }
         #start-game, .action-btn {
             background: #ff5722;
@@ -62,6 +63,12 @@
             font-size: 20px;
             font-weight: bold;
             color: red;
+        }
+        #loser-container {
+            font-size: 22px;
+            font-weight: bold;
+            color: blue;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -93,6 +100,7 @@
             <button class="action-btn" onclick="validateQuestion(true)">Réussi ✅</button>
             <button class="action-btn" onclick="validateQuestion(false)">Échoué ❌</button>
             <p id="gage-container"></p>
+            <p id="loser-container"></p>
         </div>
     </div>
 
@@ -114,8 +122,10 @@
             "Fais semblant de choisir un plat mais commande toujours la même chose. 🍽️",
             "Chante une chanson en rapport avec la nourriture. 🎶"
         ];
-        let currentPlayerIndex = 0;
+        let currentPlayer;
         let currentQuestion = "";
+        let roundsPlayed = 0;
+        const maxRounds = 3;
 
         function addPlayer() {
             let nameInput = document.getElementById("playerName").value;
@@ -154,42 +164,46 @@
         }
 
         function askQuestion() {
-            if (questions.length === 0) {
-                document.getElementById("question").textContent = "Toutes les questions ont été posées ! Rejouez ?";
-                document.getElementById("start-game").disabled = true;
+            if (questions.length === 0 || roundsPlayed >= maxRounds * players.length) {
+                endGame();
                 return;
             }
 
+            let randomPlayerIndex = Math.floor(Math.random() * players.length);
+            currentPlayer = players[randomPlayerIndex];
+
             let randomIndex = Math.floor(Math.random() * questions.length);
             currentQuestion = questions[randomIndex];
-            document.getElementById("question").textContent = `${players[currentPlayerIndex].name}, ${currentQuestion}`;
 
+            document.getElementById("question").textContent = `${currentPlayer.name}, ${currentQuestion}`;
             questions.splice(randomIndex, 1);
+
+            roundsPlayed++;
         }
 
         function validateQuestion(success) {
             if (currentQuestion === "") return;
 
-            let player = players[currentPlayerIndex];
-
             if (success) {
-                player.score += 10;
+                currentPlayer.score += 10;
             } else {
                 let randomGageIndex = Math.floor(Math.random() * gages.length);
                 let gage = gages[randomGageIndex];
-                document.getElementById("gage-container").textContent = `${player.name} doit faire : ${gage}`;
+                document.getElementById("gage-container").textContent = `${currentPlayer.name} doit faire : ${gage}`;
                 gages.splice(randomGageIndex, 1);
             }
 
             updatePlayerList();
-            nextPlayer();
+            askQuestion();
         }
 
-        function nextPlayer() {
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-            document.getElementById("question").textContent = "Cliquez pour poser une nouvelle question !";
-            document.getElementById("gage-container").textContent = "";
-            currentQuestion = "";
+        function endGame() {
+            let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
+            let randomGageIndex = Math.floor(Math.random() * gages.length);
+            let gage = gages[randomGageIndex];
+
+            document.getElementById("loser-container").textContent = `${loser.name} a perdu et doit faire : ${gage}`;
+            document.getElementById("start-game").disabled = true;
         }
     </script>
 
