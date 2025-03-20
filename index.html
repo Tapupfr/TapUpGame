@@ -3,82 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Le Jeu Ultime !</title>
+    <title>Tap Up - Expérience 3D</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
         body {
             font-family: 'Orbitron', sans-serif;
-            background: radial-gradient(circle, #000428, #004e92);
+            background: linear-gradient(90deg, #000428, #004e92);
             color: white;
             text-align: center;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         h1 {
-            font-size: 32px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px cyan;
+            font-size: 40px;
+            text-shadow: 0 0 30px cyan;
             animation: glow 1.5s infinite alternate;
+            transform: perspective(500px) rotateX(15deg);
         }
 
         @keyframes glow {
-            from { text-shadow: 0 0 10px cyan; }
-            to { text-shadow: 0 0 30px lime; }
+            from { text-shadow: 0 0 15px cyan; }
+            to { text-shadow: 0 0 40px lime; }
         }
 
         .button {
-            background: linear-gradient(90deg, cyan, lime);
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.8), rgba(0, 255, 127, 0.8));
             color: black;
-            padding: 12px 20px;
-            font-size: 18px;
+            padding: 15px 30px;
+            font-size: 20px;
             border: none;
             cursor: pointer;
-            border-radius: 8px;
-            margin: 10px;
+            border-radius: 10px;
+            margin: 15px;
             transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 0 10px cyan;
+            box-shadow: 0 0 15px cyan;
             display: block;
             width: 80%;
             max-width: 400px;
-            margin: 10px auto;
+            transform: perspective(600px) rotateY(5deg);
         }
 
         .button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px lime;
-        }
-
-        .container {
-            max-width: 95%;
-            margin: auto;
+            transform: scale(1.1) perspective(600px) rotateY(0deg);
+            box-shadow: 0 0 30px lime;
         }
 
         .neon-box {
             border: 3px solid cyan;
-            padding: 15px;
-            width: 95%;
-            max-width: 500px;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
             margin: 20px auto;
             border-radius: 15px;
             text-shadow: 0 0 15px cyan;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
-            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.9);
+            transform: perspective(800px) rotateX(10deg);
+            transition: transform 0.5s ease-in-out;
         }
 
         .neon-box:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) perspective(800px) rotateX(0deg);
         }
 
-        #question-box, #game-container, #end-screen {
+        #game-container, #end-screen {
             display: none;
         }
 
         @media (max-width: 600px) {
-            h1 { font-size: 26px; }
+            h1 { font-size: 28px; }
             .button { font-size: 16px; padding: 10px 15px; }
             .neon-box { padding: 10px; }
         }
@@ -87,7 +80,7 @@
 <body>
 
     <div id="portal">
-        <h1>🚀 Tap Up - Le Jeu Qui Vous Défi !</h1>
+        <h1>🚀 Tap Up - Jeu Immersif 3D !</h1>
         <p>🎲 Choisissez une catégorie :</p>
         <div class="neon-box">
             <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
@@ -99,27 +92,27 @@
     </div>
 
     <div id="game-container">
-        <h1>⚡ Tap Up - C'est Parti ! ⚡</h1>
+        <h1>⚡ Tap Up - Début de la Partie ! ⚡</h1>
         <div class="neon-box">
-            <p id="announcement">Prêt à jouer ?</p>
-            <button class="button" onclick="startQuestions()">Commencer</button>
+            <p id="announcement">Préparez-vous au show !</p>
+            <button class="button" onclick="startQuestions()">🚀 Commencer</button>
         </div>
         <div class="neon-box" id="question-box">
             <p id="player-turn"></p>
             <p id="question"></p>
-            <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
-            <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
+            <button class="button" onclick="validateQuestion(true)">🎯 Réussi</button>
+            <button class="button" onclick="validateQuestion(false)">💥 Échoué</button>
         </div>
     </div>
 
     <div id="end-screen">
         <h1>🎉 Fin de la partie !</h1>
         <p id="loser-container"></p>
-        <button class="button" onclick="restartGame()">🔄 Recommencer une partie</button>
+        <button class="button" onclick="restartGame()">🔄 Rejouer</button>
     </div>
 
     <script>
-        let players = [];
+        let players = [{name: "Joueur 1"}, {name: "Joueur 2"}];
         let selectedCategory = "";
         let questions = {
             culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
@@ -128,14 +121,9 @@
             defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
             mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
         };
-        let usedQuestions = [];
-        let currentPlayerIndex = 0;
-        let questionCounter = 0;
-        let rounds = 3;
 
         function chooseCategory(category) {
             selectedCategory = category;
-            usedQuestions = [];
             document.getElementById("portal").style.display = "none";
             document.getElementById("game-container").style.display = "block";
         }
@@ -147,34 +135,18 @@
         }
 
         function nextQuestion() {
-            if (questionCounter >= players.length * rounds) {
-                endGame();
-                return;
-            }
-
-            currentPlayerIndex = questionCounter % players.length;
+            let currentPlayerIndex = Math.floor(Math.random() * players.length);
             let player = players[currentPlayerIndex];
 
-            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q));
-            if (availableQuestions.length === 0) availableQuestions = questions[selectedCategory];
+            let questionList = questions[selectedCategory];
+            let question = questionList[Math.floor(Math.random() * questionList.length)];
 
-            let question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-            usedQuestions.push(question);
-
-            document.getElementById("player-turn").textContent = `🔥 ${player.name}, c'est ton tour !`;
+            document.getElementById("player-turn").textContent = `🎮 ${player.name}, c'est ton tour !`;
             document.getElementById("question").textContent = question;
-
-            questionCounter++;
         }
 
         function validateQuestion(success) {
             nextQuestion();
-        }
-
-        function endGame() {
-            document.getElementById("game-container").style.display = "none";
-            document.getElementById("end-screen").style.display = "block";
-            document.getElementById("loser-container").textContent = "😢 Dommage, le jeu est terminé !";
         }
 
         function restartGame() {
