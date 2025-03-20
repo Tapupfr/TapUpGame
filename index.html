@@ -12,7 +12,6 @@
             background: radial-gradient(circle, #000428, #004e92);
             color: white;
             text-align: center;
-            overflow: hidden;
         }
 
         h1 {
@@ -36,9 +35,12 @@
             border: none;
             cursor: pointer;
             border-radius: 8px;
-            margin: 15px;
+            margin: 10px;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 0 10px cyan;
+            display: block;
+            width: 60%;
+            margin: 10px auto;
         }
 
         .button:hover {
@@ -120,11 +122,13 @@
     <div id="portal">
         <h1>🚀 Tap Up - Le Jeu Qui Vous Défi !</h1>
         <p>🎲 Choisissez une catégorie :</p>
-        <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
-        <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
-        <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
-        <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
-        <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
+        <div class="neon-box">
+            <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
+            <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
+            <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
+            <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
+            <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
+        </div>
     </div>
 
     <div id="category-selection">
