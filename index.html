@@ -101,20 +101,6 @@
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        #answer-section {
-            margin-top: 20px;
-            animation: bounce 1.5s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0px); }
-            to { transform: translateY(-10px); }
-        }
-
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -146,7 +132,8 @@
         <div class="neon-box">
             <p id="announcement"></p>
             <p id="question">Prêt à jouer ?</p>
-            <button class="button" onclick="nextTurn()">Question Suivante</button>
+            <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
+            <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
             <div id="answer-section"></div>
         </div>
     </div>
@@ -161,6 +148,8 @@
         let players = [];
         let selectedCategory = "";
         let usedQuestions = [];
+        let currentPlayerIndex = 0;
+        let rounds = 3;
         let questions = {
             culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
             humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
@@ -168,6 +157,12 @@
             defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
             mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
         };
+        let gages = [
+            "🛑 Danse au milieu du restaurant pendant 10 secondes !",
+            "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
+            "🤣 Commande un dessert en pleurant de joie.",
+            "😜 Parle avec l’accent italien pendant 2 minutes."
+        ];
 
         function chooseCategory(category) {
             selectedCategory = category;
@@ -180,8 +175,7 @@
         function addPlayer() {
             let nameInput = document.getElementById("playerName").value;
             if (nameInput.trim() === "" || players.length >= 6) return;
-            let emoji = players.length % 2 === 0 ? "👨‍🚀" : "👩‍🚀";
-            players.push({ name: nameInput, emoji: emoji, score: 0 });
+            players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
             document.getElementById("playerName").value = "";
         }
 
