@@ -6,169 +6,105 @@
     <title>Tap Up - Qui Perd, Prend un Gage !</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #ffcc00;
+            background-color: #f4f4f4;
             padding: 20px;
         }
-
-        #logo {
-            width: 150px;
-            margin-bottom: 20px;
-        }
-
         #game-container {
-            max-width: 600px;
+            display: flex;
+            max-width: 800px;
             margin: auto;
             background: white;
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         #players {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
+            width: 30%;
+            text-align: left;
+            padding-right: 20px;
+            border-right: 2px solid #ddd;
         }
-
+        #game {
+            width: 70%;
+        }
         .player {
-            text-align: center;
             font-size: 18px;
+            margin: 10px 0;
         }
-
-        .player span {
-            font-size: 30px;
-        }
-
-        #question-container {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        #start-game, #next-question {
-            background-color: #ff5733;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 10px;
-        }
-
-        #gage-container {
+        .emoji {
             font-size: 20px;
-            margin-top: 20px;
-            font-weight: bold;
-            color: red;
+            margin-right: 5px;
         }
-
-        #scores {
-            margin-top: 20px;
-            font-size: 18px;
+        #question {
+            font-size: 22px;
+            margin: 20px 0;
         }
-
-        #restart-game {
-            display: none;
-            margin-top: 20px;
-            background-color: #28a745;
+        #start-game {
+            background: #ff5722;
             color: white;
-            padding: 10px 20px;
             border: none;
-            cursor: pointer;
+            padding: 10px 20px;
             font-size: 18px;
-            border-radius: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #start-game:hover {
+            background: #e64a19;
         }
     </style>
 </head>
 <body>
 
-    <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/6/69/Android-Logo.png" alt="TapUp Logo">  <!-- Remplace l'URL par ton logo -->
-
+    <h1>Tap Up - Qui Perd, Prend un Gage !</h1>
     <div id="game-container">
+        <!-- Colonne des joueurs -->
         <div id="players">
-            <div class="player"><span>👨</span> <br> <span id="player1">Alex</span> <br> Score: <span id="score1">0</span></div>
-            <div class="player"><span>👩</span> <br> <span id="player2">Emma</span> <br> Score: <span id="score2">0</span></div>
+            <h3>Joueurs</h3>
+            <div class="player"><span class="emoji">👨‍🦱</span> Alex - <b>0 pts</b></div>
+            <div class="player"><span class="emoji">👩‍🦰</span> Emma - <b>0 pts</b></div>
+            <div class="player"><span class="emoji">👨‍🦱</span> Max - <b>0 pts</b></div>
+            <div class="player"><span class="emoji">👩‍🦰</span> Sarah - <b>0 pts</b></div>
         </div>
 
-        <div id="question-container">Appuie sur "Commencer" pour jouer !</div>
-
-        <button id="start-game">Commencer</button>
-        <button id="next-question" style="display:none;">Question suivante</button>
-
-        <div id="gage-container"></div>
-
-        <button id="restart-game">Nouvelle Partie</button>
+        <!-- Zone de jeu -->
+        <div id="game">
+            <p id="question">Clique pour démarrer le jeu !</p>
+            <button id="start-game">Lancer une Question</button>
+        </div>
     </div>
 
     <script>
         const questions = [
-            "Quelle est la capitale de l'Italie ?",
-            "Combien de côtés a un hexagone ?",
-            "Quel est le plus grand océan du monde ?",
-            "Quelle planète est surnommée la planète rouge ?",
-            "Combien de couleurs y a-t-il dans un arc-en-ciel ?"
+            "Si tu étais un plat du menu, lequel serais-tu ? 🍕🍣",
+            "Raconte une anecdote gênante dans un restaurant. 😂",
+            "Qui ici mettrait le plus de sauce piquante sur son plat ? 🌶️",
+            "Imite le serveur pendant 10 secondes ! 🍽️",
+            "Commande un verre d’eau comme si c'était du champagne. 🍾",
+            "Raconte une blague sur la nourriture. 🍔"
         ];
 
         const gages = [
-            "Commande un dessert pour tout le monde ! 🍰",
-            "Prends un shot de la boisson la plus forte 🍹",
-            "Offre une tournée de café ☕",
-            "Laisse un bon avis sur Google pour le restaurant 📱",
-            "Fais un compliment au serveur/serveuse 😊"
+            "Va dire au serveur que tu veux payer en bisous. 💋",
+            "Fais un discours comme si c’était ton anniversaire. 🎤",
+            "Demande un doggy bag même si tu n’as rien mangé. 🥡",
+            "Fais un selfie avec un inconnu du restaurant. 📸",
+            "Fais semblant de choisir un plat mais commande toujours la même chose. 🍽️",
+            "Chante une chanson en rapport avec la nourriture. 🎶"
         ];
 
-        let currentPlayer = 1;
-        let playerScores = { 1: 0, 2: 0 };
-        let questionsUsed = [];
-        let gagesUsed = [];
-
-        function getRandomItem(array, usedItems) {
-            let item;
-            do {
-                item = array[Math.floor(Math.random() * array.length)];
-            } while (usedItems.includes(item) && usedItems.length < array.length);
-            usedItems.push(item);
-            return item;
-        }
-
         document.getElementById("start-game").addEventListener("click", function() {
-            this.style.display = "none";
-            document.getElementById("next-question").style.display = "inline-block";
-            nextQuestion();
-        });
+            let randomIndex = Math.floor(Math.random() * questions.length);
+            document.getElementById("question").textContent = questions[randomIndex];
+            
+            // Supprimer la question pour éviter la répétition
+            questions.splice(randomIndex, 1);
 
-        document.getElementById("next-question").addEventListener("click", function() {
-            if (playerScores[1] < 3 || playerScores[2] < 3) {
-                nextQuestion();
-            } else {
-                endGame();
+            if (questions.length === 0) {
+                document.getElementById("question").textContent = "Toutes les questions ont été posées ! Rejouez ?";
+                document.getElementById("start-game").disabled = true;
             }
-        });
-
-        function nextQuestion() {
-            let question = getRandomItem(questions, questionsUsed);
-            document.getElementById("question-container").textContent = question;
-        }
-
-        function endGame() {
-            document.getElementById("question-container").textContent = "Fin du jeu !";
-            document.getElementById("next-question").style.display = "none";
-            document.getElementById("restart-game").style.display = "inline-block";
-
-            let gage = getRandomItem(gages, gagesUsed);
-            document.getElementById("gage-container").textContent = "Gage : " + gage;
-        }
-
-        document.getElementById("restart-game").addEventListener("click", function() {
-            questionsUsed = [];
-            gagesUsed = [];
-            playerScores = { 1: 0, 2: 0 };
-            document.getElementById("question-container").textContent = "Appuie sur 'Commencer' pour jouer !";
-            document.getElementById("gage-container").textContent = "";
-            document.getElementById("restart-game").style.display = "none";
-            document.getElementById("start-game").style.display = "inline-block";
         });
     </script>
 
