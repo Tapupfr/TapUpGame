@@ -3,102 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Qui Perd, Prend un Gage !</title>
+    <title>Tap Up - Le Jeu Futuriste !</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #000428, #004e92);
+            color: white;
             text-align: center;
-            background-color: #f4f4f4;
-            padding: 20px;
+            overflow: hidden;
         }
+
+        h1 {
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px cyan;
+        }
+
         #game-container {
             display: flex;
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
         }
+
         #players {
             width: 30%;
             text-align: left;
-            padding-right: 20px;
-            border-right: 2px solid #ddd;
+            padding: 20px;
+            border-right: 2px solid cyan;
         }
+
         #game {
             width: 70%;
+            padding: 20px;
         }
+
         .player {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .emoji {
             font-size: 20px;
-            margin-right: 5px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
+        .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
         #question {
             font-size: 22px;
-            margin: 20px 0;
             font-weight: bold;
+            margin: 20px;
+            animation: glow 1s infinite alternate;
         }
-        #start-game, .action-btn {
-            background: #ff5722;
-            color: white;
-            border: none;
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px cyan; }
+            to { text-shadow: 0 0 20px lime; }
+        }
+
+        .button {
+            background: cyan;
+            color: black;
             padding: 10px 20px;
             font-size: 18px;
+            border: none;
             cursor: pointer;
             border-radius: 5px;
-            margin: 5px;
+            margin: 10px;
+            transition: 0.3s;
         }
-        .action-btn {
-            background: #009688;
+
+        .button:hover {
+            background: lime;
+            transform: scale(1.1);
         }
-        #start-game:hover {
-            background: #e64a19;
-        }
+
         #gage-container {
-            margin-top: 20px;
             font-size: 20px;
-            font-weight: bold;
             color: red;
+            font-weight: bold;
+            margin-top: 20px;
         }
+
         #loser-container {
             font-size: 22px;
             font-weight: bold;
-            color: blue;
+            color: yellow;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Tap Up - Qui Perd, Prend un Gage !</h1>
+    <h1>⚡ Tap Up - Qui Perd, Prend un Gage ! ⚡</h1>
 
-    <!-- Zone d'entrée des joueurs -->
     <div id="setup">
-        <h2>Ajoutez les joueurs :</h2>
+        <h2>💡 Ajoutez les joueurs :</h2>
         <input type="text" id="playerName" placeholder="Entrez un prénom">
-        <button onclick="addPlayer()">Ajouter</button>
-        <button onclick="startGame()">Démarrer la partie</button>
+        <button class="button" onclick="addPlayer()">Ajouter</button>
+        <button class="button" onclick="startGame()">Démarrer</button>
         <p id="error-msg" style="color: red;"></p>
     </div>
 
     <div id="game-container" style="display: none;">
-        <!-- Colonne des joueurs -->
         <div id="players">
-            <h3>Joueurs</h3>
+            <h3>👥 Joueurs & Scores</h3>
             <div id="player-list"></div>
         </div>
 
-        <!-- Zone de jeu -->
         <div id="game">
-            <p id="question">Cliquez pour poser une question !</p>
-            <button id="start-game" onclick="askQuestion()">Lancer une Question</button>
+            <p id="question">Cliquez pour une question !</p>
+            <button class="button" onclick="askQuestion()">Lancer</button>
             <br>
-            <button class="action-btn" onclick="validateQuestion(true)">Réussi ✅</button>
-            <button class="action-btn" onclick="validateQuestion(false)">Échoué ❌</button>
+            <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
+            <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
             <p id="gage-container"></p>
             <p id="loser-container"></p>
         </div>
@@ -107,42 +130,35 @@
     <script>
         let players = [];
         let questions = [
-            "Si tu étais un plat du menu, lequel serais-tu ? 🍕🍣",
-            "Raconte une anecdote gênante dans un restaurant. 😂",
-            "Qui ici mettrait le plus de sauce piquante sur son plat ? 🌶️",
-            "Imite le serveur pendant 10 secondes ! 🍽️",
-            "Commande un verre d’eau comme si c'était du champagne. 🍾",
-            "Raconte une blague sur la nourriture. 🍔"
+            "💭 Quelle est la pire chose que tu as commandée au resto ?",
+            "🍕 Si tu devais manger UN SEUL plat toute ta vie, ce serait quoi ?",
+            "🔥 Défie un joueur au bras de fer sur la table !",
+            "📸 Fais une pose bizarre avec ta fourchette et prends une photo !",
+            "🍽️ Commande un plat en chantant !",
+            "🎭 Fais semblant d’être un chef étoilé en goûtant ton plat !"
         ];
         let gages = [
-            "Va dire au serveur que tu veux payer en bisous. 💋",
-            "Fais un discours comme si c’était ton anniversaire. 🎤",
-            "Demande un doggy bag même si tu n’as rien mangé. 🥡",
-            "Fais un selfie avec un inconnu du restaurant. 📸",
-            "Fais semblant de choisir un plat mais commande toujours la même chose. 🍽️",
-            "Chante une chanson en rapport avec la nourriture. 🎶"
+            "🛑 Danse au milieu du restaurant pendant 10 secondes !",
+            "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
+            "🤣 Commande un dessert en pleurant de joie.",
+            "😜 Parle avec l’accent italien pendant 2 minutes.",
+            "💰 Demande si tu peux payer en lave-vaisselle."
         ];
         let currentPlayer;
-        let currentQuestion = "";
         let roundsPlayed = 0;
         const maxRounds = 3;
 
         function addPlayer() {
             let nameInput = document.getElementById("playerName").value;
-            if (nameInput.trim() === "") {
-                document.getElementById("error-msg").textContent = "Veuillez entrer un prénom.";
+            if (nameInput.trim() === "" || players.length >= 6) {
+                document.getElementById("error-msg").textContent = "Ajoutez au moins 2 et max 6 joueurs.";
                 return;
             }
-            if (players.length >= 6) {
-                document.getElementById("error-msg").textContent = "Maximum 6 joueurs.";
-                return;
-            }
-            let gender = players.length % 2 === 0 ? "👨‍🦱" : "👩‍🦰";
-            players.push({ name: nameInput, score: 0, emoji: gender });
+            let avatar = players.length % 2 === 0 ? "👨‍🚀" : "👩‍🚀";
+            players.push({ name: nameInput, score: 0, emoji: avatar });
 
             updatePlayerList();
             document.getElementById("playerName").value = "";
-            document.getElementById("error-msg").textContent = "";
         }
 
         function updatePlayerList() {
@@ -154,10 +170,7 @@
         }
 
         function startGame() {
-            if (players.length < 2) {
-                document.getElementById("error-msg").textContent = "Ajoutez au moins 2 joueurs.";
-                return;
-            }
+            if (players.length < 2) return;
             document.getElementById("setup").style.display = "none";
             document.getElementById("game-container").style.display = "flex";
             updatePlayerList();
@@ -173,37 +186,24 @@
             currentPlayer = players[randomPlayerIndex];
 
             let randomIndex = Math.floor(Math.random() * questions.length);
-            currentQuestion = questions[randomIndex];
+            let question = questions[randomIndex];
 
-            document.getElementById("question").textContent = `${currentPlayer.name}, ${currentQuestion}`;
+            document.getElementById("question").textContent = `${currentPlayer.name}, ${question}`;
             questions.splice(randomIndex, 1);
 
             roundsPlayed++;
         }
 
         function validateQuestion(success) {
-            if (currentQuestion === "") return;
-
-            if (success) {
-                currentPlayer.score += 10;
-            } else {
-                let randomGageIndex = Math.floor(Math.random() * gages.length);
-                let gage = gages[randomGageIndex];
-                document.getElementById("gage-container").textContent = `${currentPlayer.name} doit faire : ${gage}`;
-                gages.splice(randomGageIndex, 1);
-            }
-
+            if (success) currentPlayer.score += 10;
+            else document.getElementById("gage-container").textContent = `${currentPlayer.name} doit faire : ${gages[Math.floor(Math.random() * gages.length)]}`;
             updatePlayerList();
             askQuestion();
         }
 
         function endGame() {
             let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
-            let randomGageIndex = Math.floor(Math.random() * gages.length);
-            let gage = gages[randomGageIndex];
-
-            document.getElementById("loser-container").textContent = `${loser.name} a perdu et doit faire : ${gage}`;
-            document.getElementById("start-game").disabled = true;
+            document.getElementById("loser-container").textContent = `${loser.name} a perdu et doit faire : ${gages[Math.floor(Math.random() * gages.length)]}`;
         }
     </script>
 
