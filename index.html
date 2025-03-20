@@ -12,10 +12,13 @@
             background: radial-gradient(circle, #000428, #004e92);
             color: white;
             text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         h1 {
-            font-size: 42px;
+            font-size: 32px;
             text-transform: uppercase;
             letter-spacing: 3px;
             text-shadow: 0 0 20px cyan;
@@ -30,8 +33,8 @@
         .button {
             background: linear-gradient(90deg, cyan, lime);
             color: black;
-            padding: 15px 30px;
-            font-size: 20px;
+            padding: 12px 20px;
+            font-size: 18px;
             border: none;
             cursor: pointer;
             border-radius: 8px;
@@ -39,7 +42,8 @@
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 0 10px cyan;
             display: block;
-            width: 60%;
+            width: 80%;
+            max-width: 400px;
             margin: 10px auto;
         }
 
@@ -48,15 +52,16 @@
             box-shadow: 0 0 20px lime;
         }
 
-        #category-selection, #game-container, #end-screen {
-            display: none;
+        .container {
+            max-width: 95%;
+            margin: auto;
         }
 
         .neon-box {
             border: 3px solid cyan;
-            padding: 20px;
-            width: 90%;
-            max-width: 600px;
+            padding: 15px;
+            width: 95%;
+            max-width: 500px;
             margin: 20px auto;
             border-radius: 15px;
             text-shadow: 0 0 15px cyan;
@@ -68,38 +73,14 @@
             transform: scale(1.05);
         }
 
-        #players-list {
-            text-align: left;
-            margin: auto;
-            width: fit-content;
+        #question-box, #game-container, #end-screen {
+            display: none;
         }
 
-        .player {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-            font-size: 22px;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .player:hover {
-            transform: scale(1.1);
-        }
-
-        .emoji {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-
-        #question {
-            font-size: 24px;
-            font-weight: bold;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 600px) {
+            h1 { font-size: 26px; }
+            .button { font-size: 16px; padding: 10px 15px; }
+            .neon-box { padding: 10px; }
         }
     </style>
 </head>
@@ -117,23 +98,14 @@
         </div>
     </div>
 
-    <div id="category-selection">
-        <h2 id="selected-category"></h2>
-        <p>Ajoutez les joueurs :</p>
-        <input type="text" id="playerName" placeholder="Entrez un prénom">
-        <button class="button" onclick="addPlayer()">Ajouter</button>
-        <button class="button" onclick="startGame()">Démarrer</button>
-        <p id="error-msg" style="color: red;"></p>
-        <div id="players-list"></div>
-    </div>
-
     <div id="game-container">
         <h1>⚡ Tap Up - C'est Parti ! ⚡</h1>
         <div class="neon-box">
             <p id="announcement">Prêt à jouer ?</p>
             <button class="button" onclick="startQuestions()">Commencer</button>
         </div>
-        <div class="neon-box" id="question-box" style="display: none;">
+        <div class="neon-box" id="question-box">
+            <p id="player-turn"></p>
             <p id="question"></p>
             <button class="button" onclick="validateQuestion(true)">Réussi ✅</button>
             <button class="button" onclick="validateQuestion(false)">Échoué ❌</button>
@@ -149,9 +121,6 @@
     <script>
         let players = [];
         let selectedCategory = "";
-        let usedQuestions = [];
-        let currentPlayerIndex = 0;
-        let rounds = 3;
         let questions = {
             culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
             humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
@@ -159,35 +128,57 @@
             defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
             mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
         };
-        let gages = [
-            "🛑 Danse au milieu du restaurant pendant 10 secondes !",
-            "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
-            "🤣 Commande un dessert en pleurant de joie.",
-            "😜 Parle avec l’accent italien pendant 2 minutes."
-        ];
+        let usedQuestions = [];
+        let currentPlayerIndex = 0;
+        let questionCounter = 0;
+        let rounds = 3;
 
         function chooseCategory(category) {
             selectedCategory = category;
+            usedQuestions = [];
             document.getElementById("portal").style.display = "none";
-            document.getElementById("category-selection").style.display = "block";
-            document.getElementById("selected-category").textContent = `📚 Catégorie : ${category.toUpperCase()}`;
-        }
-
-        function addPlayer() {
-            let nameInput = document.getElementById("playerName").value;
-            if (nameInput.trim() === "" || players.length >= 6) return;
-            players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
-            document.getElementById("playerName").value = "";
-        }
-
-        function startGame() {
-            document.getElementById("category-selection").style.display = "none";
             document.getElementById("game-container").style.display = "block";
         }
 
         function startQuestions() {
-            document.querySelector(".neon-box").style.display = "none";
+            document.getElementById("announcement").style.display = "none";
             document.getElementById("question-box").style.display = "block";
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (questionCounter >= players.length * rounds) {
+                endGame();
+                return;
+            }
+
+            currentPlayerIndex = questionCounter % players.length;
+            let player = players[currentPlayerIndex];
+
+            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q));
+            if (availableQuestions.length === 0) availableQuestions = questions[selectedCategory];
+
+            let question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(question);
+
+            document.getElementById("player-turn").textContent = `🔥 ${player.name}, c'est ton tour !`;
+            document.getElementById("question").textContent = question;
+
+            questionCounter++;
+        }
+
+        function validateQuestion(success) {
+            nextQuestion();
+        }
+
+        function endGame() {
+            document.getElementById("game-container").style.display = "none";
+            document.getElementById("end-screen").style.display = "block";
+            document.getElementById("loser-container").textContent = "😢 Dommage, le jeu est terminé !";
+        }
+
+        function restartGame() {
+            location.reload();
         }
     </script>
 
