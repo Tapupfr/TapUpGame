@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Up - Qui Perd, Prend un Gage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        #game-container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background-color: grey;
+        }
+        #result {
+            font-weight: bold;
+            font-size: 18px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h2>🎲 Tap Up - Qui Perd, Prend un Gage</h2>
+        <div id="setup">
+            <label>Entrez les prénoms des joueurs (séparés par une virgule) :</label><br>
+            <input type="text" id="players" placeholder="Ex: Paul, Sophie, Alex"><br>
+            <button onclick="startGame()">Lancer la Partie</button>
+        </div>
+
+        <div id="game" style="display:none;">
+            <h3 id="turnText"></h3>
+            <p id="challengeText"></p>
+            <button onclick="recordResult(true)">✅ Réussi</button>
+            <button onclick="recordResult(false)">❌ Échec</button>
+        </div>
+
+        <div id="endGame" style="display:none;">
+            <h3 id="result"></h3>
+            <p id="punishment"></p>
+            <button onclick="restartGame()">🔄 Rejouer</button>
+        </div>
+    </div>
+
+    <script>
+        let players = [];
+        let scores = {};
+        let round = 0;
+        let totalRounds = 5;
+        let currentPlayer = "";
+        
+        const challenges = [
+            "Imite ton voisin de table pendant 30 secondes.",
+            "Donne trois noms de cocktails en moins de 5 secondes.",
+            "Raconte ta pire anecdote de soirée.",
+            "Fais une déclaration d'amour à un des joueurs.",
+            "Demande une serviette au serveur avec un accent anglais.",
+            "Chante une chanson au choix des autres joueurs.",
+            "Fais un high-five à une personne inconnue dans le bar.",
+            "Réalise un cri d’animal au milieu du restaurant.",
+            "Fais un compliment sincère à chaque joueur.",
+            "Décris ton pire rendez-vous amoureux en 30 secondes."
+        ];
+
+        const punishments = [
+            "Commande une boisson et offre-la à un inconnu.",
+            "Parle avec un accent russe jusqu’à la fin de la partie.",
+            "Va voir une autre table et demande leur avis sur le meilleur cocktail ici.",
+            "Fais un selfie avec le serveur et poste-le sur Instagram.",
+            "Danse pendant 30 secondes sur une musique choisie par les autres.",
+            "Offre une tournée de shooters au joueur à ta gauche.",
+            "Demande au barman une boisson 'mystère'.",
+            "Chante une chanson entière devant tout le monde.",
+            "Fais semblant de téléphoner à une célébrité connue.",
+            "Échange de place avec un inconnu pendant 2 minutes."
+        ];
+
+        function startGame() {
+            const input = document.getElementById("players").value;
+            players = input.split(",").map(p => p.trim()).filter(p => p !== "");
+
+            if (players.length < 2) {
+                alert("Veuillez entrer au moins deux joueurs !");
+                return;
+            }
+
+            scores = {};
+            players.forEach(player => scores[player] = 0);
+
+            document.getElementById("setup").style.display = "none";
+            document.getElementById("game").style.display = "block";
+
+            nextRound();
+        }
+
+        function nextRound() {
+            if (round >= totalRounds) {
+                endGame();
+                return;
+            }
+
+            round++;
+            currentPlayer = players[Math.floor(Math.random() * players.length)];
+            let challenge = challenges[Math.floor(Math.random() * challenges.length)];
+
+            document.getElementById("turnText").innerText = `Tour ${round} - C'est à ${currentPlayer} de jouer !`;
+            document.getElementById("challengeText").innerText = challenge;
+        }
+
+        function recordResult(success) {
+            if (!success) {
+                scores[currentPlayer]++;
+            }
+            nextRound();
+        }
+
+        function endGame() {
+            document.getElementById("game").style.display = "none";
+            document.getElementById("endGame").style.display = "block";
+
+            let loser = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            let punishment = punishments[Math.floor(Math.random() * punishments.length)];
+
+            document.getElementById("result").innerText = `⚠️ ${loser} est le grand perdant !`;
+            document.getElementById("punishment").innerText = `🔥 Son gage : ${punishment}`;
+        }
+
+        function restartGame() {
+            document.getElementById("endGame").style.display = "none";
+            document.getElementById("setup").style.display = "block";
+            document.getElementById("players").value = "";
+            round = 0;
+        }
+    </script>
+
+</body>
+</html>
