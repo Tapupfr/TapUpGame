@@ -1,59 +1,56 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tap Up</title>
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="script.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Up - Jeu interactif</title>
+    <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
 
-  <!-- Écran d'accueil -->
-  <section id="accueil" class="screen active">
-    <div class="logo">Tap Up</div>
-    <div class="welcome animated">Bienvenue dans l'arène Tap Up !</div>
-    <div class="categories">
-      <button class="cat-btn" data-cat="culture">🧠 Culture Générale</button>
-      <button class="cat-btn" data-cat="humour">😂 Humour</button>
-      <button class="cat-btn" data-cat="blagues">🤣 Blagues</button>
-      <button class="cat-btn" data-cat="defis">🔥 Défis</button>
-      <button class="cat-btn" data-cat="mystere">🎭 Mystère</button>
+    <!-- Écran d'accueil -->
+    <div id="portal">
+        <img src="assets/logo.png" alt="Tap Up Logo" class="logo">
+        <h1>🚀 Bienvenue dans Tap Up !</h1>
+        <p>🎲 Choisissez votre catégorie de questions</p>
+        <div class="categories">
+            <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
+            <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
+            <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
+            <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
+            <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
+        </div>
     </div>
-  </section>
 
-  <!-- Sélection des joueurs -->
-  <section id="joueurs" class="screen">
-    <h2>Saisis les prénoms des joueurs (max 6)</h2>
-    <div id="inputs-container">
-      <input type="text" class="player-input" maxlength="12">
-      <input type="text" class="player-input" maxlength="12">
-      <input type="text" class="player-input" maxlength="12">
-      <input type="text" class="player-input" maxlength="12">
-      <input type="text" class="player-input" maxlength="12">
-      <input type="text" class="player-input" maxlength="12">
+    <!-- Sélection des joueurs -->
+    <div id="category-selection">
+        <h2 id="selected-category"></h2>
+        <p>Ajoutez les joueurs :</p>
+        <input type="text" id="playerName" placeholder="Entrez un prénom">
+        <button class="button" onclick="addPlayer()">Ajouter</button>
+        <button class="button" onclick="startGame()">Démarrer</button>
+        <p id="error-msg" class="error"></p>
+        <div id="players-list"></div>
     </div>
-    <button id="valider-joueurs">Démarrer la partie</button>
-  </section>
 
-  <!-- Phase de jeu -->
-  <section id="jeu" class="screen">
-    <div id="joueur-actif" class="highlighted"></div>
-    <div id="question-area" class="animated"></div>
-    <button id="repondre-btn">Répondre</button>
-    <div id="resultat"></div>
-    <div id="scores">
-      <!-- Scores dynamiques -->
+    <!-- Phase de jeu -->
+    <div id="game-container">
+        <h1>⚡ Tap Up - Jouons ! ⚡</h1>
+        <div class="neon-box">
+            <p id="announcement"></p>
+            <p id="question">Préparez-vous à jouer !</p>
+            <div id="answer-section"></div>
+        </div>
     </div>
-  </section>
 
-  <!-- Perdant & Gage -->
-  <section id="fin" class="screen">
-    <div id="perdant-msg" class="flash"></div>
-    <button id="mon-gage">Découvrir mon gage</button>
-    <div id="gage-area" class="animated"></div>
-    <button id="rejouer">Recommencer une partie</button>
-  </section>
+    <!-- Écran de fin -->
+    <div id="end-screen">
+        <h1>🎉 Fin de la partie !</h1>
+        <p id="loser-container"></p>
+        <p id="gage-container"></p>
+        <button class="button" onclick="restartGame()">🔄 Recommencer</button>
+    </div>
 
+    <script src="assets/script.js"></script>
 </body>
 </html>
