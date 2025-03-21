@@ -1,120 +1,58 @@
-/* styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
 body {
-  margin: 0;
-  font-family: 'Orbitron', sans-serif;
-  background: linear-gradient(135deg, #11001C, #3C006F);
-  color: white;
-  overflow: hidden;
-}
-
-.screen {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
-}
-
-.screen.active {
-  display: flex;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #11001C, #3C006F);
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 .logo {
-  font-size: 4rem;
-  color: #FF00FF;
-  text-shadow: 0 0 20px #FF00FF;
-  margin-bottom: 20px;
+    width: 150px;
+    margin-top: 20px;
+    filter: drop-shadow(0 0 10px #ff00ff);
 }
 
-.welcome.animated {
-  font-size: 1.5rem;
-  animation: glow 2s infinite alternate;
-}
-
-@keyframes glow {
-  from { text-shadow: 0 0 10px #00f, 0 0 20px #0ff; }
-  to { text-shadow: 0 0 20px #f0f, 0 0 30px #0ff; }
+h1 {
+    font-size: 36px;
+    text-shadow: 0 0 20px #ff00ff;
 }
 
 .categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
 }
 
-.cat-btn {
-  background: #29002A;
-  border: 2px solid #FF00FF;
-  color: white;
-  padding: 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.button {
+    background: linear-gradient(90deg, #ff00ff, #ff0080);
+    color: white;
+    padding: 15px 25px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px #ff00ff;
 }
 
-.cat-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 15px #FF00FF;
+.button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #ff00ff;
 }
 
-#inputs-container input {
-  margin: 5px;
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: none;
-}
-
-button {
-  background-color: #FF00FF;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 20px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-#joueur-actif {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  animation: highlight 1s infinite alternate;
-}
-
-@keyframes highlight {
-  from { text-shadow: 0 0 10px #f0f; }
-  to { text-shadow: 0 0 20px #0ff; }
-}
-
-#resultat {
-  font-size: 1.2rem;
-  margin-top: 15px;
-}
-
-#scores {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  justify-content: center;
-}
-
-#scores div {
-  background: #11001C;
-  padding: 10px;
-  border-radius: 10px;
-  border: 2px solid #FF00FF;
-}
-
-.flash {
-  animation: flashAnim 1s infinite alternate;
-}
-
-@keyframes flashAnim {
-  0% { background-color: #FF00FF; }
-  100% { background-color: #000; }
+.neon-box {
+    background: rgba(255, 0, 255, 0.1);
+    border: 2px solid #ff00ff;
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #ff00ff;
 }
