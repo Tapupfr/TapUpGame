@@ -1,116 +1,51 @@
-// script.js
-
-const screens = {
-  accueil: document.getElementById("accueil"),
-  joueurs: document.getElementById("joueurs"),
-  jeu: document.getElementById("jeu"),
-  fin: document.getElementById("fin")
+let players = [];
+let selectedCategory = "";
+let usedQuestions = [];
+let questions = {
+    culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
+    humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !"],
+    blagues: ["😆 Pourquoi les plongeurs plongent-ils toujours en arrière ?", "🤡 Quelle est la différence entre un pigeon ?"],
+    defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !"],
+    mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?"]
 };
 
-let joueurs = [];
-let currentIndex = 0;
-let questionsParJoueur = 3;
-let questionsTotales = [];
-let currentQuestion = null;
-let scores = {};
+let gages = [
+    "🛑 Danse au milieu du restaurant pendant 10 secondes !",
+    "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
+    "🤣 Commande un dessert en pleurant de joie."
+];
 
-const categories = {
-  culture: ["Quelle est la capitale de l’Australie ?", "En quelle année a eu lieu la Révolution française ?"],
-  humour: ["Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ?", "Qu’est-ce qui est jaune et qui attend ?"],
-  blagues: ["C’est l’histoire d’un pingouin qui respire par les fesses...", "Pourquoi les squelettes ne se battent jamais entre eux ?"],
-  defis: ["Fais 10 pompes maintenant !", "Crie 'Je suis un génie !' dans le restaurant !"],
-  mystere: ["Tu dois révéler ton secret le plus honteux.", "Fais une imitation de ton animal préféré."]
-};
+function chooseCategory(category) {
+    selectedCategory = category;
+    document.getElementById("portal").style.display = "none";
+    document.getElementById("category-selection").style.display = "block";
+    document.getElementById("selected-category").textContent = `📚 Catégorie choisie : ${category.toUpperCase()}`;
+}
 
-document.querySelectorAll(".cat-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const cat = btn.dataset.cat;
-    questionsTotales = [...categories[cat]];
-    showScreen("joueurs");
-  });
-});
-
-document.getElementById("valider-joueurs").addEventListener("click", () => {
-  joueurs = [];
-  scores = {};
-  document.querySelectorAll(".player-input").forEach(input => {
-    const nom = input.value.trim();
-    if (nom) {
-      const emoji = Math.random() > 0.5 ? "👦" : "👧";
-      joueurs.push(emoji + " " + nom);
-      scores[nom] = 0;
+function addPlayer() {
+    let nameInput = document.getElementById("playerName").value;
+    if (nameInput.trim() === "" || players.length >= 6) {
+        document.getElementById("error-msg").textContent = "Ajoutez au moins 2 et max 6 joueurs.";
+        return;
     }
-  });
-  shuffleArray(questionsTotales);
-  showScreen("jeu");
-  lancerTour();
-});
-
-function lancerTour() {
-  if (currentIndex >= joueurs.length * questionsParJoueur) {
-    afficherPerdant();
-    return;
-  }
-
-  const joueur = joueurs[currentIndex % joueurs.length];
-  document.getElementById("joueur-actif").textContent = `🔥 À toi de briller, ${joueur} ! Montre-nous ton génie !`;
-  currentQuestion = questionsTotales.pop();
-  document.getElementById("question-area").textContent = currentQuestion;
-  document.getElementById("resultat").textContent = "";
+    players.push({ name: nameInput, score: 0 });
+    document.getElementById("playerName").value = "";
 }
 
-document.getElementById("repondre-btn").addEventListener("click", () => {
-  const joueur = joueurs[currentIndex % joueurs.length].split(" ")[1];
-  const reussi = Math.random() > 0.3;
-  if (reussi) {
-    scores[joueur]++;
-    document.getElementById("resultat").textContent = "Bonne réponse !";
-  } else {
-    document.getElementById("resultat").textContent = "Oups... mauvaise réponse.";
-  }
-  updateScores();
-  currentIndex++;
-  setTimeout(lancerTour, 1500);
-});
-
-function updateScores() {
-  const zoneScores = document.getElementById("scores");
-  zoneScores.innerHTML = "";
-  for (let j of joueurs) {
-    const nom = j.split(" ")[1];
-    const score = scores[nom];
-    const div = document.createElement("div");
-    div.textContent = `${j} : ${score}`;
-    zoneScores.appendChild(div);
-  }
+function startGame() {
+    if (players.length < 2) return;
+    document.getElementById("category-selection").style.display = "none";
+    document.getElementById("game-container").style.display = "block";
+    nextTurn();
 }
 
-function afficherPerdant() {
-  const minScore = Math.min(...Object.values(scores));
-  const perdants = Object.entries(scores).filter(([_, v]) => v === minScore);
-  const [nom] = perdants[Math.floor(Math.random() * perdants.length)];
-  document.getElementById("perdant-msg").textContent = `Dommage ${nom}, tu es notre grand perdant ! 😅`;
-  showScreen("fin");
-
-  document.getElementById("mon-gage").onclick = () => {
-    const gages = ["Chante une chanson à haute voix.", "Fais le tour du resto en dansant.", "Commande de l'eau comme un roi."];
-    const gage = gages[Math.floor(Math.random() * gages.length)];
-    document.getElementById("gage-area").textContent = gage;
-  };
+function nextTurn() {
+    let player = players[Math.floor(Math.random() * players.length)];
+    document.getElementById("announcement").textContent = `🔥 ${player.name}, c'est ton tour !`;
+    let question = questions[selectedCategory][Math.floor(Math.random() * questions[selectedCategory].length)];
+    document.getElementById("question").textContent = question;
 }
 
-document.getElementById("rejouer").addEventListener("click", () => {
-  window.location.reload();
-});
-
-function showScreen(nom) {
-  Object.values(screens).forEach(s => s.classList.remove("active"));
-  screens[nom].classList.add("active");
-}
-
-function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
+function restartGame() {
+    location.reload();
 }
