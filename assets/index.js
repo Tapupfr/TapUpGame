@@ -1,5 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("Tap Up Game Loaded 🎮");
-  document.getElementById("root").innerHTML =
-    "<h2 style='color:white;text-align:center;'>Le jeu est prêt !</h2>";
+    console.log("✅ Tap Up Game Chargé !");
+    
+    const startButton = document.getElementById("startGame");
+    if (startButton) {
+        startButton.addEventListener("click", function () {
+            alert("🚀 Le jeu va commencer !");
+        });
+    }
+
+    const categoryButtons = document.querySelectorAll(".category-btn");
+    categoryButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            alert(`📌 Catégorie sélectionnée : ${this.dataset.category}`);
+        });
+    });
 });
