@@ -3,37 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Jeu interactif</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <title>Tap Up - Choisis ta Catégorie !</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #000428, #004e92);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 36px;
+            text-shadow: 0 0 20px cyan;
+        }
+
+        .button {
+            background: cyan;
+            color: black;
+            padding: 15px 25px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+            transition: 0.3s;
+            display: block;
+            width: 80%;
+            max-width: 400px;
+            margin: 10px auto;
+        }
+
+        .button:hover {
+            background: lime;
+            transform: scale(1.1);
+        }
+
+        #category-selection, #game-container, #end-screen {
+            display: none;
+        }
+
+        .neon-box {
+            border: 2px solid cyan;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 10px;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        #players-list {
+            text-align: left;
+            margin: auto;
+            width: fit-content;
+        }
+
+        .player {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .emoji {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        #answer-section {
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Écran d'accueil -->
     <div id="portal">
-        <img src="assets/logo.png" alt="Tap Up Logo" class="logo">
         <h1>🚀 Bienvenue dans Tap Up !</h1>
-        <p>🎲 Choisissez votre catégorie de questions</p>
-        <div class="categories">
-            <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
-            <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
-            <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
-            <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
-            <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
-        </div>
+        <p>🎲 Choisissez votre catégorie de questions pour commencer l'aventure !</p>
+        <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
+        <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
+        <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
+        <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
+        <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
     </div>
 
-    <!-- Sélection des joueurs -->
     <div id="category-selection">
         <h2 id="selected-category"></h2>
         <p>Ajoutez les joueurs :</p>
         <input type="text" id="playerName" placeholder="Entrez un prénom">
         <button class="button" onclick="addPlayer()">Ajouter</button>
         <button class="button" onclick="startGame()">Démarrer</button>
-        <p id="error-msg" class="error"></p>
+        <p id="error-msg" style="color: red;"></p>
         <div id="players-list"></div>
     </div>
 
-    <!-- Phase de jeu -->
     <div id="game-container">
         <h1>⚡ Tap Up - Jouons ! ⚡</h1>
         <div class="neon-box">
@@ -43,14 +108,99 @@
         </div>
     </div>
 
-    <!-- Écran de fin -->
     <div id="end-screen">
         <h1>🎉 Fin de la partie !</h1>
         <p id="loser-container"></p>
         <p id="gage-container"></p>
-        <button class="button" onclick="restartGame()">🔄 Recommencer</button>
+        <button class="button" onclick="restartGame()">🔄 Recommencer une partie</button>
     </div>
 
-    <script src="assets/script.js"></script>
+    <script>
+        let players = [];
+        let selectedCategory = "";
+        let usedQuestions = [];
+        let questions = {
+            culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
+            humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
+            blagues: ["😆 Pourquoi les plongeurs plongent-ils toujours en arrière ?", "🤡 Quelle est la différence entre un pigeon ?", "😂 Pourquoi le poulet a traversé la route ?"],
+            defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
+            mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
+        };
+        let gages = [
+            "🛑 Danse au milieu du restaurant pendant 10 secondes !",
+            "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
+            "🤣 Commande un dessert en pleurant de joie.",
+            "😜 Parle avec l’accent italien pendant 2 minutes."
+        ];
+        let currentPlayerIndex = 0;
+        let rounds = 3;
+
+        function chooseCategory(category) {
+            selectedCategory = category;
+            usedQuestions = [];
+            document.getElementById("portal").style.display = "none";
+            document.getElementById("category-selection").style.display = "block";
+            document.getElementById("selected-category").textContent = `📚 Catégorie choisie : ${category.toUpperCase()}`;
+        }
+
+        function addPlayer() {
+            let nameInput = document.getElementById("playerName").value;
+            if (nameInput.trim() === "" || players.length >= 6) {
+                document.getElementById("error-msg").textContent = "Ajoutez au moins 2 et max 6 joueurs.";
+                return;
+            }
+            players.push({ name: nameInput, score: 0, questionsAnswered: 0 });
+            document.getElementById("playerName").value = "";
+        }
+
+        function startGame() {
+            if (players.length < 2) return;
+            document.getElementById("category-selection").style.display = "none";
+            document.getElementById("game-container").style.display = "block";
+            nextTurn();
+        }
+
+        function nextTurn() {
+            if (players.every(p => p.questionsAnswered === rounds)) {
+                endGame();
+                return;
+            }
+
+            do {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            } while (players[currentPlayerIndex].questionsAnswered >= rounds);
+
+            let player = players[currentPlayerIndex];
+            document.getElementById("announcement").textContent = `🔥 ${player.name}, c'est ton tour !`;
+
+            let availableQuestions = questions[selectedCategory].filter(q => !usedQuestions.includes(q));
+            if (availableQuestions.length === 0) availableQuestions = questions[selectedCategory];
+
+            let question = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            usedQuestions.push(question);
+            document.getElementById("question").textContent = `${player.name}, ${question}`;
+
+            document.getElementById("answer-section").innerHTML = `<button class="button" onclick="validateQuestion(true)">Répondre</button>`;
+        }
+
+        function validateQuestion() {
+            let player = players[currentPlayerIndex];
+            player.score += 1;
+            player.questionsAnswered++;
+
+            nextTurn();
+        }
+
+        function endGame() {
+            let loser = players.reduce((acc, curr) => (curr.score < acc.score ? curr : acc), players[0]);
+            document.getElementById("end-screen").style.display = "block";
+            document.getElementById("loser-container").textContent = `❌ Dommage ${loser.name}, ton gage est : ${gages[Math.floor(Math.random() * gages.length)]}`;
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+    </script>
+
 </body>
 </html>
