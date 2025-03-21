@@ -1,185 +1,59 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Up - Le Jeu Futuriste</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
-        body {
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(90deg, #000428, #004e92);
-            color: white;
-            text-align: center;
-            overflow: hidden;
-            animation: backgroundAnim 5s infinite alternate;
-        }
-
-        @keyframes backgroundAnim {
-            0% { background: linear-gradient(90deg, #000428, #004e92); }
-            100% { background: linear-gradient(90deg, #004e92, #000428); }
-        }
-
-        #logo {
-            width: 200px;
-            margin: 20px auto;
-        }
-
-        h1 {
-            font-size: 36px;
-            text-shadow: 0 0 20px cyan;
-            animation: neonText 1.5s infinite alternate;
-        }
-
-        @keyframes neonText {
-            0% { text-shadow: 0 0 10px cyan; }
-            100% { text-shadow: 0 0 20px pink; }
-        }
-
-        .button {
-            background: cyan;
-            color: black;
-            padding: 15px 25px;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin: 10px;
-            transition: 0.3s;
-            display: block;
-            width: 80%;
-            max-width: 400px;
-            margin: 10px auto;
-        }
-
-        .button:hover {
-            background: pink;
-            transform: scale(1.1);
-        }
-
-        .game-section {
-            display: none;
-        }
-
-        .neon-box {
-            border: 2px solid cyan;
-            padding: 20px;
-            width: 80%;
-            max-width: 500px;
-            margin: 20px auto;
-            border-radius: 10px;
-            text-shadow: 0 0 10px cyan;
-        }
-
-        #players-list {
-            text-align: left;
-            margin: auto;
-            width: fit-content;
-        }
-
-        .player {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-        }
-
-        .emoji {
-            font-size: 20px;
-            margin-right: 10px;
-        }
-
-        #answer-section {
-            margin-top: 15px;
-        }
-
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tap Up</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
 
-    <img id="logo" src="tapup-logo.png" alt="Tap Up Logo">
-
-    <div id="portal">
-        <h1>🚀 Bienvenue dans Tap Up !</h1>
-        <p>🎲 Choisissez votre catégorie pour commencer l'aventure !</p>
-        <button class="button" onclick="chooseCategory('culture')">🧠 Culture Générale</button>
-        <button class="button" onclick="chooseCategory('humour')">😂 Humour</button>
-        <button class="button" onclick="chooseCategory('blagues')">🤣 Blagues</button>
-        <button class="button" onclick="chooseCategory('defis')">🔥 Défis</button>
-        <button class="button" onclick="chooseCategory('mystere')">🎭 Mystère</button>
+  <!-- Écran d'accueil -->
+  <section id="accueil" class="screen active">
+    <div class="logo">Tap Up</div>
+    <div class="welcome animated">Bienvenue dans l'arène Tap Up !</div>
+    <div class="categories">
+      <button class="cat-btn" data-cat="culture">🧠 Culture Générale</button>
+      <button class="cat-btn" data-cat="humour">😂 Humour</button>
+      <button class="cat-btn" data-cat="blagues">🤣 Blagues</button>
+      <button class="cat-btn" data-cat="defis">🔥 Défis</button>
+      <button class="cat-btn" data-cat="mystere">🎭 Mystère</button>
     </div>
+  </section>
 
-    <div id="category-selection" class="game-section">
-        <h2 id="selected-category"></h2>
-        <p>Ajoutez les joueurs :</p>
-        <input type="text" id="playerName" placeholder="Entrez un prénom">
-        <button class="button" onclick="addPlayer()">Ajouter</button>
-        <button class="button" onclick="startGame()">Démarrer</button>
-        <p id="error-msg" style="color: red;"></p>
-        <div id="players-list"></div>
+  <!-- Sélection des joueurs -->
+  <section id="joueurs" class="screen">
+    <h2>Saisis les prénoms des joueurs (max 6)</h2>
+    <div id="inputs-container">
+      <input type="text" class="player-input" maxlength="12">
+      <input type="text" class="player-input" maxlength="12">
+      <input type="text" class="player-input" maxlength="12">
+      <input type="text" class="player-input" maxlength="12">
+      <input type="text" class="player-input" maxlength="12">
+      <input type="text" class="player-input" maxlength="12">
     </div>
+    <button id="valider-joueurs">Démarrer la partie</button>
+  </section>
 
-    <div id="game-container" class="game-section">
-        <h1>⚡ Tap Up - Jouons ! ⚡</h1>
-        <div class="neon-box">
-            <p id="announcement"></p>
-            <p id="question">Cliquez pour commencer !</p>
-            <div id="answer-section">
-                <button class="button" onclick="nextTurn()">Commencer</button>
-            </div>
-        </div>
+  <!-- Phase de jeu -->
+  <section id="jeu" class="screen">
+    <div id="joueur-actif" class="highlighted"></div>
+    <div id="question-area" class="animated"></div>
+    <button id="repondre-btn">Répondre</button>
+    <div id="resultat"></div>
+    <div id="scores">
+      <!-- Scores dynamiques -->
     </div>
+  </section>
 
-    <div id="end-screen" class="game-section">
-        <h1>🎉 Fin de la partie !</h1>
-        <p id="loser-container"></p>
-        <p id="gage-container"></p>
-        <button class="button" onclick="restartGame()">🔄 Recommencer une partie</button>
-    </div>
-
-    <script>
-        let players = [];
-        let selectedCategory = "";
-        let usedQuestions = [];
-        let questions = {
-            culture: ["💡 Quel est le plus long fleuve du monde ?", "🧐 Qui a peint La Joconde ?", "🏛️ En quelle année a eu lieu la Révolution Française ?"],
-            humour: ["🤣 Quelle est la meilleure blague que tu connais ?", "😂 Fais une imitation d'un acteur célèbre !", "📢 Raconte une blague à voix haute !"],
-            blagues: ["😆 Pourquoi les plongeurs plongent-ils toujours en arrière ?", "🤡 Quelle est la différence entre un pigeon ?", "😂 Pourquoi le poulet a traversé la route ?"],
-            defis: ["🔥 Bois une gorgée de ta boisson sans les mains !", "🎭 Fais une grimace et tiens-la 10 secondes !", "💪 Fais 5 pompes maintenant !"],
-            mystere: ["🔮 Si tu pouvais connaître une seule chose du futur, ce serait quoi ?", "🕵️‍♂️ Si tu pouvais être un personnage de film, qui serais-tu ?", "🦸‍♂️ Quel super-pouvoir aimerais-tu avoir ?"]
-        };
-
-        let gages = [
-            "🛑 Danse au milieu du restaurant pendant 10 secondes !",
-            "🎤 Chante une chanson avec un verre d’eau en guise de micro.",
-            "🤣 Commande un dessert en pleurant de joie.",
-            "😜 Parle avec l’accent italien pendant 2 minutes."
-        ];
-
-        function chooseCategory(category) {
-            selectedCategory = category;
-            document.getElementById("portal").style.display = "none";
-            document.getElementById("category-selection").style.display = "block";
-            document.getElementById("selected-category").textContent = `📚 Catégorie : ${category.toUpperCase()}`;
-        }
-
-        function addPlayer() {
-            let nameInput = document.getElementById("playerName").value;
-            if (nameInput.trim() !== "") {
-                players.push(nameInput);
-                document.getElementById("playerName").value = "";
-            }
-        }
-
-        function startGame() {
-            document.getElementById("category-selection").style.display = "none";
-            document.getElementById("game-container").style.display = "block";
-        }
-
-        function restartGame() {
-            location.reload();
-        }
-    </script>
+  <!-- Perdant & Gage -->
+  <section id="fin" class="screen">
+    <div id="perdant-msg" class="flash"></div>
+    <button id="mon-gage">Découvrir mon gage</button>
+    <div id="gage-area" class="animated"></div>
+    <button id="rejouer">Recommencer une partie</button>
+  </section>
 
 </body>
 </html>
